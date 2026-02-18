@@ -2,7 +2,7 @@ FROM debian:bullseye-slim
 LABEL name="nintendo-dgamer-pi"
 LABEL description="Optimized DGamer server for Raspberry Pi (ARM)"
 
-# Install dependencies needed for compiling
+# Updated dependencies for successful Apache + PHP compilation
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
@@ -12,9 +12,12 @@ RUN apt-get update && apt-get install -y \
     libreadline-dev \
     libexpat1-dev \
     zlib1g-dev \
+    libssl-dev \
+    libapr1-dev \
+    libaprutil1-dev \
+    libpcre3-dev \
     php-cli \
     php-dev \
-    php-common \
     libapache2-mod-php \
     && rm -rf /var/lib/apt/lists/*
 
