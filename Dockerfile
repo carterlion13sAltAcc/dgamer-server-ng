@@ -12,6 +12,10 @@ RUN apt-get update && apt-get install -y \
     libreadline-dev \
     libexpat1-dev \
     zlib1g-dev \
+    php-cli \
+    php-dev \
+    php-common \
+    libapache2-mod-php \
     && rm -rf /var/lib/apt/lists/*
 
 # Fix OpenSSL Security Level for DS Compatibility
