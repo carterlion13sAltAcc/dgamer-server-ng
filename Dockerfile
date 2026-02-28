@@ -34,11 +34,8 @@ RUN curl -L https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.
     && make -j$(nproc) \
     && make install
 
-# 5. Compile Apache 2.4.48 (Archive URLs)
-RUN curl -L https://archive.apache.org/dist/httpd/httpd-2.4.48.tar.gz | tar -xzf - && mv httpd-2.4.48 httpd \
-    && curl -L https://archive.apache.org/dist/apr/apr-1.7.0.tar.gz | tar -xzf - && mv apr-1.7.0 httpd/srclib/apr \
-    && curl -L https://archive.apache.org/dist/apr/apr-util-1.6.1.tar.gz | tar -xzf - && mv apr-util-1.6.1 httpd/srclib/apr-util \
-    && cd httpd && ./configure \
+# 5. Compile Apache 2.4.48
+RUN cd httpd && ./configure \
     --prefix=/usr/local/apache \
     --with-included-apr \
     --enable-ssl \
@@ -47,8 +44,13 @@ RUN curl -L https://archive.apache.org/dist/httpd/httpd-2.4.48.tar.gz | tar -xzf
     --enable-mods-static=ssl \
     --enable-mods-shared=all \
     --enable-so \
+    --with-pcre=/usr \
+    # THE FIXES:
+    CPPFLAGS="-I/usr/include -DOPENSSL_NO_KRB5" \
+    LDFLAGS="-L/usr/lib" \
     && make -j$(nproc) \
     && make install
+
 
 # Create necessary directories
 RUN mkdir -p /usr/local/apache/certs /var/www
