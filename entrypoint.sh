@@ -12,8 +12,6 @@ set -e
 #echo -e "Hosting on ${HOST_IP} ..."
 
 # Add FQDNs to hosts file
-echo "127.0.0.1    conntest.nintendowifi.net" >> /etc/hosts
-echo "127.0.0.1    nas.nintendowifi.net" >> /etc/hosts
 echo "127.0.0.1    home.disney.go.com" >> /etc/hosts
 
 #sed -i "s/HOST_IP/${HOST_IP}/g" /etc/bind/dgamer.db
