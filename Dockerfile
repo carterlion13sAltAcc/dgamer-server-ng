@@ -68,9 +68,14 @@ RUN cd httpd && ./configure \
     && make -j$(nproc) \
     && make install
 
+# Create necessary directories
+RUN mkdir -p /usr/local/apache/certs /var/www
+
 # Copy your local files into the image
 # Ensure these folders exist in your GitHub repo!
 COPY ./sites/ /var/www/
+COPY ./certs/ /usr/local/apache/certs/
+COPY ./certs/ /usr/local/apache/certs/p
 COPY ./configs/apache/ /usr/local/apache/conf/
 COPY ./entrypoint.sh /srv/
 
