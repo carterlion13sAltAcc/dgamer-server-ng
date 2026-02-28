@@ -8,5 +8,3 @@ $TTL 60
                    IN     NS    localhost.
 
 conntest.nintendowifi.net    A        HOST_IP
-nas.nintendowifi.net    A        HOST_IP
-home.disney.go.com    A        HOST_IP
