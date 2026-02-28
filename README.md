@@ -2,14 +2,7 @@
 
 This project builds a Docker image that replaces the web servers for Nintendo Wifi and DGamer:
 
-- conntest.nintendowifi.net (HTTP/80)
-- nas.nintendowifi.net (HTTPS/443)
 - home.disney.go.com (HTTPS/443)
-
-This image does not include a DNS server, it is recommended to use [this DNS server](https://github.com/samuelcolvin/dnserver) with the following command:
-```
-docker run --rm -p 53:53/udp -v $(pwd)/zones.txt:/zones/zones.txt samuelcolvin/dnserver
-```
 
 ### Docker
 
