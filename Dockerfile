@@ -2,7 +2,12 @@ FROM debian:bullseye-slim
 LABEL name="nintendo-dgamer-pi"
 LABEL description="Optimized DGamer server for Raspberry Pi (ARM)"
 
-# Install build dependencies + dnsmasq for DNS redirection
+# FIX FOR 2026: Redirect to Debian Archives because Bullseye is End-of-Life
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list && \
+    sed -i '/bullseye-updates/d' /etc/apt/sources.list
+
+# Install build dependencies + dnsmasq
 RUN apt-get update && apt-get install -y \
     curl build-essential make libz-dev libbz2-dev \
     libreadline-dev libexpat1-dev zlib1g-dev libssl-dev \
@@ -14,7 +19,6 @@ RUN apt-get update && apt-get install -y \
 RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=0/' /etc/ssl/openssl.cnf
 
 # 1. Compile OpenSSL 1.0.2k (SSLv3 enabled for DS)
-# Added -fPIC for ARM architecture compatibility
 WORKDIR /tmp
 RUN curl -L https://www.openssl.org/source/openssl-1.0.2k.tar.gz | tar -xzf - \
     && cd openssl-1.0.2k \
@@ -50,7 +54,6 @@ RUN mkdir -p /usr/local/apache/certs /var/www
 
 # Copy your local files
 COPY ./sites/ /var/www/
-# Note: Ensure these folders exist in your directory where you run 'docker build'
 COPY ./configs/apache/ /usr/local/apache/conf/
 COPY ./entrypoint.sh /srv/
 
