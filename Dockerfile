@@ -34,20 +34,21 @@ RUN curl -L https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.
     && make -j$(nproc) \
     && make install
 
-# 5. Compile Apache 2.4.48
-RUN cd httpd && ./configure \
-    --prefix=/usr/local/apache \
-    --with-included-apr \
-    --enable-ssl \
-    --with-ssl=/usr \
-    --enable-ssl-staticlib-deps \
-    --enable-mods-static=ssl \
-    --enable-mods-shared=all \
-    --enable-so \
-    --with-pcre=/usr \
-    # THE FIXES:
-    CPPFLAGS="-I/usr/include -DOPENSSL_NO_KRB5" \
-    LDFLAGS="-L/usr/lib" \
+# 5. Download and Compile Apache 2.4.48
+RUN curl -L https://archive.apache.org/dist/httpd/httpd-2.4.48.tar.gz | tar -xzf - \
+    && cd httpd-2.4.48 \
+    && ./configure \
+        --prefix=/usr/local/apache \
+        --with-included-apr \
+        --enable-ssl \
+        --with-ssl=/usr \
+        --enable-ssl-staticlib-deps \
+        --enable-mods-static=ssl \
+        --enable-mods-shared=all \
+        --enable-so \
+        --with-pcre=/usr \
+        CPPFLAGS="-I/usr/include -DOPENSSL_NO_KRB5" \
+        LDFLAGS="-L/usr/lib" \
     && make -j$(nproc) \
     && make install
 
@@ -55,12 +56,17 @@ RUN cd httpd && ./configure \
 # Create necessary directories
 RUN mkdir -p /usr/local/apache/certs /var/www
 
-# Copy your local files (Ensure these match your fork's folder names!)
+# Copy your local files
 COPY ./sites/ /var/www/
+COPY ./certs/ /usr/local/apache/certs/
 COPY ./configs/apache/ /usr/local/apache/conf/
 COPY ./entrypoint.sh /srv/
 
 RUN chmod +x /srv/entrypoint.sh
+
+EXPOSE 80 443 53/tcp 53/udp
+WORKDIR /usr/local/apache
+CMD ["/srv/entrypoint.sh"]
 
 EXPOSE 80 443 53/tcp 53/udp
 WORKDIR /usr/local/apache
